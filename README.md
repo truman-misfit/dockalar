@@ -1,4 +1,6 @@
 ## About
+[![](https://badge.imagelayers.io/trumanwoo/dockalar:latest.svg)](https://imagelayers.io/?images=trumanwoo/dockalar:latest 'Get your own badge on imagelayers.io')
+
 Dockalar is a Scala/SBT docker base image
 
 ## Features

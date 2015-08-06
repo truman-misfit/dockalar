@@ -8,6 +8,7 @@ RUN apt-get update -y
 RUN apt-get upgrade -y
 RUN apt-get install -y curl
 RUN apt-get install -y unzip
+RUN apt-get install -y wget
 
 # Install Oracle JRE 8
 ENV JAVA_HOME /usr/jdk1.8.0_31
@@ -46,6 +47,23 @@ COPY sbt /usr/local/bin/
 
 RUN \
   chmod u+x /usr/local/bin/sbt
+
+# Install Takipi
+
+# Getting Java tester
+RUN wget https://s3.amazonaws.com/app-takipi-com/chen/scala-boom.jar -O scala-boom.jar
+
+# Installing Takipi via apt-get and setting up key
+RUN echo "deb [arch=amd64] http://takipi-deb-repo.s3.amazonaws.com stable main" > /etc/apt/sources.list.d/takipi.list
+ENV DEBIAN_FRONTEND noninteractive
+RUN wget -O - http://takipi-deb-repo.s3.amazonaws.com/hello@takipi.com.gpg.key | apt-key add -
+RUN apt-get update
+RUN apt-get install takipi
+RUN /opt/takipi/etc/takipi-setup-secret-key S11083#eUUrZxJP8pwJWxyj#tbC76F1tD06MQEZz9G4p+zXo+2EeY86Ngc9T9yg6wJQ=#0d65
+
+# Running Takipi daemon + a Java process with Takipi agent
+CMD (/opt/takipi/bin/takipi-service --noforkdaemon &) && \
+      java -agentlib:TakipiAgent -jar scala-boom.jar
 
 # Define work directory
 WORKDIR /

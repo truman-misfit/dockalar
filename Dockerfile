@@ -59,11 +59,24 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN wget -O - http://takipi-deb-repo.s3.amazonaws.com/hello@takipi.com.gpg.key | apt-key add -
 RUN apt-get update
 RUN apt-get install takipi
+
+# Overriding binaries with the Heroku version of Takipi
+RUN wget https://s3.amazonaws.com/app-takipi-com/deploy/linux/takipi-latest-heroku.tar.gz -O takipi-heroku.tar.gz
+RUN tar zxvf takipi-heroku.tar.gz
+RUN mv .takipi takipi
+RUN cp -r takipi /opt
+
+ENV PATH $PATH:/opt/takipi/bin
+ENV TAKIPI_SERVICE_PARAMS --xmx=180M
+
 RUN /opt/takipi/etc/takipi-setup-secret-key S11083#eUUrZxJP8pwJWxyj#tbC76F1tD06MQEZz9G4p+zXo+2EeY86Ngc9T9yg6wJQ=#0d65
 
 # Running Takipi daemon + a Java process with Takipi agent
 CMD (/opt/takipi/bin/takipi-service --noforkdaemon &) && \
       java -agentlib:TakipiAgent -jar scala-boom.jar
+
+# Running Java process with Takipi agent
+CMD java -agentlib:TakipiAgent -jar scala-boom.jar
 
 # Define work directory
 WORKDIR /

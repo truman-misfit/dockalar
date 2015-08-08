@@ -71,10 +71,6 @@ ENV TAKIPI_SERVICE_PARAMS --xmx=180M
 
 RUN /opt/takipi/etc/takipi-setup-secret-key S11083#eUUrZxJP8pwJWxyj#tbC76F1tD06MQEZz9G4p+zXo+2EeY86Ngc9T9yg6wJQ=#0d65
 
-# Running Takipi daemon + a Java process with Takipi agent
-CMD (/opt/takipi/bin/takipi-service --noforkdaemon &) && \
-      java -agentlib:TakipiAgent -jar scala-boom.jar
-
 # Running Java process with Takipi agent
 CMD java -agentlib:TakipiAgent -jar scala-boom.jar
 
